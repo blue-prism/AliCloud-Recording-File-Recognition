@@ -1,0 +1,208 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<bpr:release xmlns:bpr="http://www.blueprism.co.uk/product/release">
+    <bpr:name>BluePrism AlibabCloud Recording File Recognition</bpr:name>
+    <bpr:release-notes>BluePrism AlibabCloud Recording File Recognition</bpr:release-notes>
+    <bpr:created>2020-07-24 08:00:54Z</bpr:created>
+    <bpr:package-id>56</bpr:package-id>
+    <bpr:package-name>BluePrism AlibabCloud Recording File Recognition</bpr:package-name>
+    <bpr:user-created-by>admin</bpr:user-created-by>
+    <bpr:contents count="3">
+        <object id="7b8d6aee-4abb-4983-b10f-493734954fdc" name="BluePrism AlibabaCloud Recording File Recognition" xmlns="http://www.blueprism.co.uk/product/process"><process name="BluePrism AlibabaCloud Recording File Recognition" version="1.0" bpversion="6.7.1.21315" narrative="This VBO can be used to recognize text in recording audio files." byrefcollection="true" type="object" runmode="Background"><appdef><element name="Application Root"><id>6541c4c8-a66b-4693-b769-b1d2a90da385</id><type>Application</type><basetype>Application</basetype><datatype>unknown</datatype><diagnose>False</diagnose></element></appdef><view><camerax>-59</camerax><cameray>-23</cameray><zoom version="2">1.25</zoom></view><preconditions /><endpoint narrative="" /><subsheet subsheetid="c1aec1ae-6f66-44b4-8511-a852e6f6f8de" type="CleanUp" published="True"><name>Clean Up</name><view><camerax>0</camerax><cameray>0</cameray><zoom version="2">1.25</zoom></view></subsheet><subsheet subsheetid="7045bdf1-bb14-4e8d-9bf0-981903aa8d06" type="Normal" published="False"><name>Get AccessKeys</name><view><camerax>0</camerax><cameray>0</cameray><zoom version="2">1.25</zoom></view></subsheet><subsheet subsheetid="451da661-f02b-4f30-a8b3-6889daebdd12" type="Normal" published="True"><name>Send Recognition Request</name><view><camerax>0</camerax><cameray>119</cameray><zoom version="2">1.25</zoom></view></subsheet><subsheet subsheetid="551ba61e-f0ed-40cc-a54f-003311403930" type="Normal" published="True"><name>Get Recognition Result</name><view><camerax>5</camerax><cameray>13</cameray><zoom version="2">1.25</zoom></view></subsheet><stage stageid="b5fe8a8f-d8e7-425d-874f-0097387b192f" name="Start" type="Start"><loginhibit /><display x="15" y="-105" /><onsuccess>e061cb6c-ff56-40b6-b75a-9a0da0ef30fa</onsuccess></stage><stage stageid="e061cb6c-ff56-40b6-b75a-9a0da0ef30fa" name="End" type="End"><loginhibit /><display x="15" y="90" /></stage><stage stageid="ac8bf65b-5094-40f6-985e-2073818b12a2" name="Stage1" type="ProcessInfo"><display x="-210" y="-105" w="150" h="90" /><references><reference>System.dll</reference><reference>System.Data.dll</reference><reference>System.Xml.dll</reference><reference>System.Drawing.dll</reference><reference>System.Runtime.dll</reference><reference>System.Core.dll</reference><reference>Newtonsoft.Json.dll</reference><reference>System.Web.dll</reference><reference>aliyun-net-sdk-Core.dll</reference></references><imports><import>System</import><import>System.Drawing</import><import>System.Data</import><import>System.Text</import><import>System.Security.Cryptography</import><import>System.Collections.Generic</import><import>System.Text.RegularExpressions</import><import>System.Globalization</import><import>System.IO</import><import>System.Net</import><import>System.Web</import><import>Newtonsoft.Json</import><import>Newtonsoft.Json.Linq</import><import>Aliyun.Acs.Core</import><import>Aliyun.Acs.Core.Exceptions</import><import>Aliyun.Acs.Core.Profile</import><import>Aliyun.Acs.Core.Http</import></imports><language>csharp</language><globalcode><![CDATA[]]></globalcode><code><![CDATA[// The constant parameters, such as the region ID. Do not modify their values.
+public const string REGIONID = "ap-southeast-1";
+public const string PRODUCT = "nls-filetrans";
+public const string DOMAIN = "filetrans.ap-southeast-1.aliyuncs.com";
+public const string API_VERSION = "2019-08-23";
+public const string POST_REQUEST_ACTION = "SubmitTask";
+public const string GET_REQUEST_ACTION = "GetTaskResult";
+		
+// The keys of request parameters.
+public const string KEY_APP_KEY = "appkey";
+public const string KEY_FILE_LINK = "file_link";
+public const string KEY_VERSION = "version";
+public const string KEY_ENABLE_WORDS = "enable_words";
+public const string KEY_ENABLE_CALLBACK = "enable_callback";
+public const string KEY_CALLBACK_URL = "callback_url";
+public const string KEY_AUTO_SPLIT = "auto_split";
+public const string KEY_VALID_TIMES = "valid_times";
+public const string KEY_MAX_END_SILENCE = "max_end_silence";
+public const string KEY_MAX_SINGLE_SEGMENT_TIME = "max_single_segment_time";
+public const string KEY_CUSTOMIZATION_ID = "customization_id";
+public const string KEY_CLASS_VOCABULARY_ID = "class_vocabulary_id";
+public const string KEY_VOCABULARY_ID = "vocabulary_id";
+
+// The keys of response parameters.
+public const string KEY_TASK = "Task";
+public const string KEY_TASK_ID = "TaskId";
+public const string KEY_STATUS_TEXT = "StatusText";
+public const string KEY_STATUS_CODE = "StatusCode";
+public const string KEY_REQUEST_ID = "RequestId";
+
+// The status values.
+public const string STATUS_SUCCESS = "SUCCESS";
+public const string STATUS_RUNNING = "RUNNING";
+public const string STATUS_QUEUEING = "QUEUEING";		]]></code></stage><stage stageid="bc465542-1a6b-4651-b941-34ee7c980e34" name="Clean Up" type="SubSheetInfo"><subsheetid>c1aec1ae-6f66-44b4-8511-a852e6f6f8de</subsheetid><narrative>Currently no action defined in the page</narrative><display x="-195" y="-105" w="150" h="90" /></stage><stage stageid="19598076-bdbd-4b0f-bed8-7701a3a77f1a" name="Start" type="Start"><subsheetid>c1aec1ae-6f66-44b4-8511-a852e6f6f8de</subsheetid><loginhibit /><display x="15" y="-105" /><onsuccess>190e1012-2d4c-4ae8-b505-2b4bd417b35c</onsuccess></stage><stage stageid="190e1012-2d4c-4ae8-b505-2b4bd417b35c" name="End" type="End"><subsheetid>c1aec1ae-6f66-44b4-8511-a852e6f6f8de</subsheetid><loginhibit /><display x="15" y="90" /></stage><stage stageid="9de05725-094e-42bb-ba10-22a539294b76" name="Note1" type="Note"><subsheetid>c1aec1ae-6f66-44b4-8511-a852e6f6f8de</subsheetid><narrative>Clean Up Page
+
+This is an optional page where you might choose to perform some finalisation (or "cleanup") tasks as your business object is closed down.
+
+The cleanup action will be called automatically immediately after closing your business object at the end of a business process.
+
+You will not be able to call this action from a business process, nor will it be called at any other time than before the disposal of the business object.</narrative><display x="-180" y="60" w="180" h="230" /></stage><stage stageid="ee9b1a18-0f13-4651-9f6f-78bbc260a809" name="Note2" type="Note"><narrative>Initialise Page
+
+This is an optional page where you might choose to perform some initialisation tasks after your business object is loaded.
+
+The initialise action will be called automatically immediately after loading your business object.
+
+You will not be able to call this action from a business process, nor will it be called at any other time than after the creation of the object.</narrative><display x="-405" y="-30" w="180" h="230" /></stage><stage stageid="d9554745-b167-458e-95f3-391e5f808139" name="Note3" type="Note"><loginhibit /><narrative>‘The MIT License’
+
+© 2020 Blue Prism Limited
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE
+</narrative><display x="240" y="0" w="240" h="300" /><font family="Segoe UI" size="10" style="Regular" color="3366FF" /></stage><stage stageid="f627f242-ec3c-4e78-8f64-f0fd2cfee0d2" name="Get AccessKeys" type="SubSheetInfo"><subsheetid>7045bdf1-bb14-4e8d-9bf0-981903aa8d06</subsheetid><narrative>Retrieves the access key id and secret access key from the AlibabaCloud Recording File Recognition Service  Credential</narrative><display x="-195" y="-105" w="150" h="90" /></stage><stage stageid="8df70ef9-110c-4159-91d9-8b142a1a7e15" name="Start" type="Start"><subsheetid>7045bdf1-bb14-4e8d-9bf0-981903aa8d06</subsheetid><loginhibit /><narrative>Start of action</narrative><display x="15" y="-105" /><onsuccess>0157e320-1704-461a-91fa-f6f81e2731e5</onsuccess></stage><stage stageid="f2d7fe12-f3a9-47bd-9c75-5e94500fb70a" name="End" type="End"><subsheetid>7045bdf1-bb14-4e8d-9bf0-981903aa8d06</subsheetid><loginhibit /><narrative>End of Action</narrative><display x="15" y="15" /></stage><stage stageid="0157e320-1704-461a-91fa-f6f81e2731e5" name="Retrieve Access Keys" type="Action"><subsheetid>7045bdf1-bb14-4e8d-9bf0-981903aa8d06</subsheetid><loginhibit onsuccess="true" /><narrative>Get the specified set of credentials.
+
+An Exception will occur if access to the credentials is not allowed, based on the running Resource, Process and User.</narrative><display x="15" y="-45" /><inputs><input type="text" name="Credentials Name" friendlyname="Credentials Name" narrative="The name of the credentials to get" expr="[Credential Name]" /></inputs><outputs><output type="password" name="Password" friendlyname="Password" narrative="The password" stage="accessKeySecret" /><output type="text" name="Username" friendlyname="Username" narrative="The user name" stage="accessKeyId" /><output type="date" name="Expiry Date" friendlyname="Expiry Date" narrative="The expiry date" stage="" /><output type="text" name="Status" friendlyname="Status" narrative="The status" stage="" /></outputs><onsuccess>f2d7fe12-f3a9-47bd-9c75-5e94500fb70a</onsuccess><resource object="Blueprism.Automate.clsCredentialsActions" action="Get" /></stage><stage stageid="698d8bcb-1a74-4006-acb2-2f094915444b" name="accessKeyId" type="Data"><loginhibit /><narrative>AccessKeyID for the AlibabaCloud account</narrative><display x="-240" y="0" /><datatype>text</datatype><initialvalue /><alwaysinit /></stage><stage stageid="0bd52867-1c96-466c-9e63-72e9bb94d6b1" name="accessKeySecret" type="Data"><loginhibit /><narrative>AccessKeySecret for the AlibabaCloud account</narrative><display x="-180" y="0" /><datatype>password</datatype><initialvalueenc></initialvalueenc><alwaysinit /></stage><stage stageid="e4ff0bcf-f202-4571-b429-a02203203c81" name="Global Data Items" type="Block"><loginhibit /><display x="-285" y="-30" w="150" h="60" /><font family="Segoe UI" size="10" style="Regular" color="3366FF" /></stage><stage stageid="2b3507c9-1ad7-4fbe-b974-7dc3953f40c3" name="Credential Name" type="Data"><subsheetid>7045bdf1-bb14-4e8d-9bf0-981903aa8d06</subsheetid><loginhibit /><narrative>Credential Name which stores the credentials for Short Sentence Recognition Service</narrative><display x="-255" y="-15" /><datatype>text</datatype><initialvalue xml:space="preserve">BluePrism AlibabaCloud Recording File Recognition</initialvalue><private /><alwaysinit /></stage><stage stageid="23e131db-2fc6-4e72-b671-e99f42f99986" name="Local Data Items" type="Block"><subsheetid>7045bdf1-bb14-4e8d-9bf0-981903aa8d06</subsheetid><loginhibit /><display x="-300" y="-45" w="210" h="60" /><font family="Segoe UI" size="10" style="Regular" color="339966" /></stage><stage stageid="0e229489-397c-4d89-941f-e05c47d81959" name="Send Recognition Request" type="SubSheetInfo"><subsheetid>451da661-f02b-4f30-a8b3-6889daebdd12</subsheetid><narrative>Sends a recording file recognition request. If the request is successful, the recording file recognition server returns the task ID, which can be used to query the recognition result.</narrative><display x="-195" y="-105" w="150" h="90" /></stage><stage stageid="e6ba5f65-e1d7-482c-b0bd-d8fa4279767a" name="Start" type="Start"><subsheetid>451da661-f02b-4f30-a8b3-6889daebdd12</subsheetid><loginhibit /><narrative>Sends a recording file recognition request. If the request is successful, the recording file recognition server returns the task ID, which can be used to query the recognition result.</narrative><display x="45" y="-30" /><inputs><input type="password" name="appkey" narrative="The appkey that uniquely identifies a project created in the console." stage="appkey" /><input type="text" name="fileLink" narrative="The URL of the recording file." stage="fileLink" /><input type="text" name="version" narrative="The version of the recording file recognition service. " stage="version" /><input type="flag" name="enable_words" narrative="Specifies whether to return the recognition results of words." stage="enable_words" /><input type="flag" name="enable_callback" narrative="Specifies whether to enable the callback method. " stage="enable_callback" /><input type="text" name="callback_url" narrative="The callback URL. You must specify this parameter if you set the enable_callback parameter to true. " stage="callback_url" /><input type="flag" name="auto_split" narrative="Specifies whether to enable automatic track splitting." stage="auto_split" /><input type="collection" name="valid_times" narrative="The valid time period that truly requires speech recognition in the total length of an audio track. This should be in JSON format" stage="valid_times" /><input type="number" name="max_end_silence" narrative="Maximum allowed end silence, default value is 450, unit is millisecond" stage="max_end_silence" /><input type="number" name="max_single_segment_time" narrative="The maximum silence time allowed for a single sentence. The default value is 20000. The unit is millisecond." stage="max_single_segment_time" /><input type="text" name="customization_id" narrative="Custom model id created by pop api, empty by default" stage="customization_id" /><input type="text" name="class_vocabulary_id" narrative="ID of the created Categorized hotwords list, empty by default" stage="class_vocabulary_id" /><input type="text" name="vocabulary_id" narrative="ID of the Extended hotwords created. It is not added by default." stage="vocabulary_id" /></inputs><onsuccess>6afa1e91-52c0-432d-b926-b45ded836529</onsuccess></stage><stage stageid="c2561005-2a77-4a26-b7ad-c3278bc9ad61" name="End" type="End"><subsheetid>451da661-f02b-4f30-a8b3-6889daebdd12</subsheetid><loginhibit /><narrative>End of action</narrative><display x="45" y="180" /><outputs><output type="text" name="taskId" narrative="The ID of the recognition task." stage="taskId" /><output type="text" name="ExceptionMessage" narrative="Contains exception message in case of error" stage="ExceptionMessage" /><output type="text" name="statusText" narrative="The status message." stage="statusText" /><output type="text" name="RequestId" narrative="The ID of the request, which is used for debugging." stage="RequestId" /><output type="text" name="StatusCode" narrative="The status code." stage="StatusCode" /></outputs></stage><stage stageid="ec988773-e014-41eb-ac5f-dad41028f6ce" name="Send Recognition Request" type="Code"><subsheetid>451da661-f02b-4f30-a8b3-6889daebdd12</subsheetid><loginhibit /><narrative>Sends a recording file recognition request. If the request is successful, the recording file recognition server returns the task ID, which can be used to query the recognition result.</narrative><display x="45" y="105" w="90" h="60" /><inputs><input type="text" name="accessKeyId" expr="[accessKeyId]" /><input type="password" name="accessKeySecret" expr="[accessKeySecret]" /><input type="password" name="appKey" expr="[appkey]" /><input type="text" name="fileLink" expr="[fileLink]" /><input type="text" name="version" expr="[version]" /><input type="flag" name="enable_words" expr="[enable_words]" /><input type="flag" name="enable_callback" expr="[enable_callback]" /><input type="text" name="callback_url" expr="[callback_url]" /><input type="flag" name="auto_split" expr="[auto_split]" /><input type="collection" name="valid_times" expr="[valid_times]" /><input type="number" name="max_end_silence" expr="[max_end_silence]" /><input type="number" name="max_single_segment_time" expr="[max_single_segment_time]" /><input type="text" name="customization_id" expr="[customization_id]" /><input type="text" name="class_vocabulary_id" expr="[class_vocabulary_id]" /><input type="text" name="vocabulary_id" expr="[vocabulary_id]" /></inputs><outputs><output type="text" name="taskId" stage="taskId" /><output type="text" name="ExceptionMessage" stage="ExceptionMessage" /><output type="text" name="statusText" stage="statusText" /><output type="text" name="StatusCode" stage="StatusCode" /><output type="text" name="RequestId" stage="RequestId" /></outputs><onsuccess>c2561005-2a77-4a26-b7ad-c3278bc9ad61</onsuccess><code><![CDATA[//Initialize
+taskId = string.Empty;
+ExceptionMessage = string.Empty;
+statusText = string.Empty;
+StatusCode = string.Empty;
+RequestId = string.Empty;
+
+/**
+* Create and authenticate a client.
+*/
+			 
+IClientProfile profile = DefaultProfile.GetProfile(REGIONID,accessKeyId,accessKeySecret);
+DefaultAcsClient client = new DefaultAcsClient(profile);
+
+try
+{
+	/**
+	 * Create a recording file recognition request and set request parameters.
+	 */
+	CommonRequest request = new CommonRequest();
+	request.Domain = DOMAIN;
+	request.Version = API_VERSION;
+	request.Action = POST_REQUEST_ACTION;
+	request.Product = PRODUCT;
+	request.Method = MethodType.POST;
+	
+	// Set parameters for the recording file recognition request and add request parameters to the request body as a JSON-formatted string.
+	
+	JObject obj = new JObject();
+	obj[KEY_APP_KEY] = appKey;
+	obj[KEY_FILE_LINK] = fileLink;
+	
+	// Specify the version of the recording file recognition service. If you are a new user, set this parameter to 4.0. If you use the default version 2.0, comment out this parameter.
+	obj[KEY_VERSION] = version;
+	
+	// Specify whether to return the recognition results of words. Default value: false. This parameter takes effect only when the version of the recording file recognition service is 4.0.
+	if(enable_words!=null)	obj[KEY_ENABLE_WORDS] = enable_words;
+	if(enable_callback!=null)	obj[KEY_ENABLE_CALLBACK] = enable_callback;
+	if(callback_url!="")	obj[KEY_CALLBACK_URL] = callback_url;
+	if(auto_split!=null)	obj[KEY_AUTO_SPLIT] = auto_split;
+	if (valid_times.Rows.Count > 0) 
+		{
+		JArray valid_times_list = new JArray();
+		valid_times_list = JArray.FromObject(valid_times);
+		obj[KEY_VALID_TIMES] =  valid_times_list;
+		}
+	if(max_end_silence!=0)	obj[KEY_MAX_END_SILENCE] = max_end_silence;
+	if(max_single_segment_time!=0)	obj[KEY_MAX_SINGLE_SEGMENT_TIME] = max_single_segment_time;
+	if(customization_id!="")	obj[KEY_CUSTOMIZATION_ID] = customization_id;
+	if(class_vocabulary_id!="")	obj[KEY_CLASS_VOCABULARY_ID] = class_vocabulary_id;
+	if(vocabulary_id!="")	obj[KEY_VOCABULARY_ID] = vocabulary_id;
+
+	string task = obj.ToString();
+	request.AddBodyParameters(KEY_TASK, task);
+	
+	/**
+	 * Send the recording file recognition request and process the response returned by the server.
+	 */
+	
+	CommonResponse response = client.GetCommonResponse(request);
+	
+	if (response.HttpStatus != 200)
+	{
+		ExceptionMessage="Error response to the recording file recognition request: " + response.HttpStatus;
+	}
+	
+	// Obtain the ID of the recording file recognition task. You can use the task ID to query the recognition result.
+	else
+	{
+		JObject jsonObj = JObject.Parse(response.Data);
+		statusText = jsonObj[KEY_STATUS_TEXT].ToString();
+		StatusCode = jsonObj[KEY_STATUS_CODE].ToString();
+		taskId = jsonObj[KEY_TASK_ID].ToString();
+		RequestId = jsonObj[KEY_REQUEST_ID].ToString();
+	}
+}
+catch (ServerException ex)
+{
+	ExceptionMessage=ex.ToString();
+}
+catch (ClientException ex)
+{
+	ExceptionMessage=ex.ToString();
+}]]></code></stage><stage stageid="4a1822d1-d60f-48dd-9fae-a5f8c0a217c2" name="Input Data Items" type="Block"><subsheetid>451da661-f02b-4f30-a8b3-6889daebdd12</subsheetid><loginhibit /><display x="-300" y="-45" w="210" h="240" /><font family="Segoe UI" size="10" style="Regular" color="FFCC00" /></stage><stage stageid="c6234fdd-9007-43f7-a246-5625b27e663d" name="Output Data Items" type="Block"><subsheetid>451da661-f02b-4f30-a8b3-6889daebdd12</subsheetid><loginhibit /><display x="-300" y="210" w="210" h="105" /><font family="Segoe UI" size="10" style="Regular" color="993300" /></stage><stage stageid="1c0f3ce2-03a5-44e6-b817-9ddc674b1427" name="appkey" type="Data"><subsheetid>451da661-f02b-4f30-a8b3-6889daebdd12</subsheetid><loginhibit /><narrative>The appkey of the application. </narrative><display x="-255" y="-15" /><datatype>password</datatype><initialvalueenc></initialvalueenc><private /><alwaysinit /></stage><stage stageid="fb937400-f8e6-4f14-9da8-8089ce4485c2" name="fileLink" type="Data"><subsheetid>451da661-f02b-4f30-a8b3-6889daebdd12</subsheetid><loginhibit /><narrative>The URL of the recording file.</narrative><display x="-195" y="-15" /><datatype>text</datatype><initialvalue /><private /><alwaysinit /></stage><stage stageid="7f4124e8-78c7-4c7e-b2b8-112213f3ce96" name="version" type="Data"><subsheetid>451da661-f02b-4f30-a8b3-6889daebdd12</subsheetid><loginhibit /><narrative>The version of the recording file recognition service. </narrative><display x="-135" y="-15" /><datatype>text</datatype><initialvalue xml:space="preserve">4.0</initialvalue><private /><alwaysinit /></stage><stage stageid="37aed71a-2797-4d64-9a28-ad9fcffa227c" name="enable_words" type="Data"><subsheetid>451da661-f02b-4f30-a8b3-6889daebdd12</subsheetid><loginhibit /><narrative>Specifies whether to return the recognition results of words. </narrative><display x="-255" y="30" /><datatype>flag</datatype><initialvalue>False</initialvalue><private /><alwaysinit /></stage><stage stageid="d30b50c9-b28d-45c1-a3bb-b75d27d8eed3" name="enable_callback" type="Data"><subsheetid>451da661-f02b-4f30-a8b3-6889daebdd12</subsheetid><loginhibit /><narrative>Specifies whether to enable the callback method. </narrative><display x="-195" y="30" /><datatype>flag</datatype><initialvalue>False</initialvalue><private /><alwaysinit /></stage><stage stageid="78d730c7-23cc-45c9-bae2-645fba78dd18" name="callback_url" type="Data"><subsheetid>451da661-f02b-4f30-a8b3-6889daebdd12</subsheetid><loginhibit /><narrative>The callback URL. You must specify this parameter if you set the enable_callback parameter to true. </narrative><display x="-135" y="30" /><datatype>text</datatype><initialvalue /><private /><alwaysinit /></stage><stage stageid="dabe7b06-5504-4fb9-bb5b-1a97a6d8472c" name="auto_split" type="Data"><subsheetid>451da661-f02b-4f30-a8b3-6889daebdd12</subsheetid><loginhibit /><narrative>Specifies whether to enable automatic track splitting.</narrative><display x="-255" y="75" /><datatype>flag</datatype><initialvalue>False</initialvalue><private /><alwaysinit /></stage><stage stageid="931557d5-231e-4eb4-acc5-11d3f4580f0a" name="max_end_silence" type="Data"><subsheetid>451da661-f02b-4f30-a8b3-6889daebdd12</subsheetid><loginhibit /><narrative>Maximum allowed end silence, default value is 450, unit is millisecond</narrative><display x="-135" y="75" /><datatype>number</datatype><initialvalue /><private /><alwaysinit /></stage><stage stageid="5c5fb94c-4aeb-40a6-a943-7d4ecc571d79" name="max_single_segment_time" type="Data"><subsheetid>451da661-f02b-4f30-a8b3-6889daebdd12</subsheetid><loginhibit /><narrative>The maximum silence time allowed for a single sentence. The default value is 20000. The unit is millisecond.</narrative><display x="-255" y="120" /><datatype>number</datatype><initialvalue /><private /><alwaysinit /></stage><stage stageid="dc41bf4e-0fb6-4e5f-a050-65f6de9393ad" name="customization_id" type="Data"><subsheetid>451da661-f02b-4f30-a8b3-6889daebdd12</subsheetid><loginhibit /><narrative>Custom model id created by pop api, empty by default</narrative><display x="-195" y="120" /><datatype>text</datatype><initialvalue /><private /><alwaysinit /></stage><stage stageid="64049b75-7439-4320-bc5e-64a03be01c5b" name="class_vocabulary_id" type="Data"><subsheetid>451da661-f02b-4f30-a8b3-6889daebdd12</subsheetid><loginhibit /><narrative>ID of the created Categorized hotwords list, empty by default</narrative><display x="-135" y="120" /><datatype>text</datatype><initialvalue /><private /><alwaysinit /></stage><stage stageid="1ec632c6-6dca-4c49-817a-8e50381d7af2" name="vocabulary_id" type="Data"><subsheetid>451da661-f02b-4f30-a8b3-6889daebdd12</subsheetid><loginhibit /><narrative>ID of the Extended hotwords created. It is not added by default.</narrative><display x="-255" y="165" /><datatype>text</datatype><initialvalue /><private /><alwaysinit /></stage><stage stageid="ce506e1b-98e9-448b-b2e4-a2b122a33f4d" name="taskId" type="Data"><subsheetid>451da661-f02b-4f30-a8b3-6889daebdd12</subsheetid><narrative>The ID of the recognition task.</narrative><display x="-255" y="240" /><datatype>text</datatype><initialvalue /><private /><alwaysinit /></stage><stage stageid="be654fe4-0268-42d3-8c4b-91343b974d1c" name="ExceptionMessage" type="Data"><subsheetid>451da661-f02b-4f30-a8b3-6889daebdd12</subsheetid><narrative>Contains exception message in case of error</narrative><display x="-195" y="240" /><datatype>text</datatype><initialvalue /><private /><alwaysinit /></stage><stage stageid="6afa1e91-52c0-432d-b926-b45ded836529" name="Get AccessKeys" type="SubSheet"><subsheetid>451da661-f02b-4f30-a8b3-6889daebdd12</subsheetid><loginhibit /><display x="45" y="30" /><font family="Segoe UI" size="10" style="Regular" color="3366FF" /><onsuccess>ec988773-e014-41eb-ac5f-dad41028f6ce</onsuccess><processid>7045bdf1-bb14-4e8d-9bf0-981903aa8d06</processid></stage><stage stageid="6392f59f-3073-42a2-a886-44b87c4a75c5" name="Get Recognition Result" type="SubSheetInfo"><subsheetid>551ba61e-f0ed-40cc-a54f-003311403930</subsheetid><narrative>Gets the recognition result based on the task ID</narrative><display x="-195" y="-105" w="150" h="90" /></stage><stage stageid="3b708363-0f79-46ad-9466-0f8e6a74d86c" name="Start" type="Start"><subsheetid>551ba61e-f0ed-40cc-a54f-003311403930</subsheetid><loginhibit /><narrative>Gets the recognition result based on the task ID</narrative><display x="60" y="-30" /><inputs><input type="text" name="taskId" narrative="The ID of the recognition task." stage="taskId" /></inputs><onsuccess>2be57801-d8a0-410b-b590-e490c613b2ba</onsuccess></stage><stage stageid="1c50a6b8-ef09-4d33-8d31-e18bd73e945c" name="End" type="End"><subsheetid>551ba61e-f0ed-40cc-a54f-003311403930</subsheetid><loginhibit /><narrative>End of action</narrative><display x="60" y="180" /><outputs><output type="text" name="statusText" narrative="The status message." stage="statusText" /><output type="text" name="RecognitionJSONResponse" narrative="The server returns a response to the query request for the recording file recognition result. The response includes response parameters in a JSON-formatted string." stage="RecognitionJSONResponse" /><output type="text" name="ExceptionMessage" narrative="Contains exception message in case of error" stage="ExceptionMessage" /></outputs></stage><stage stageid="6b2c1903-c253-4a03-aa66-ff0a7ce3c269" name="Input Data Items" type="Block"><subsheetid>551ba61e-f0ed-40cc-a54f-003311403930</subsheetid><loginhibit /><display x="-285" y="-45" w="210" h="60" /><font family="Segoe UI" size="10" style="Regular" color="FFCC00" /></stage><stage stageid="0320684e-2315-4587-aa06-a50805cca4ba" name="Output Data Items" type="Block"><subsheetid>551ba61e-f0ed-40cc-a54f-003311403930</subsheetid><loginhibit /><display x="-285" y="30" w="210" h="60" /><font family="Segoe UI" size="10" style="Regular" color="993300" /></stage><stage stageid="20befb7d-6542-43cf-add9-ad9a2253889f" name="taskId" type="Data"><subsheetid>551ba61e-f0ed-40cc-a54f-003311403930</subsheetid><narrative>The ID of the recognition task.</narrative><display x="-240" y="-15" /><datatype>text</datatype><initialvalue /><private /><alwaysinit /></stage><stage stageid="c6bb9ef8-5d7e-4d8e-a437-fb56e92f8d20" name="ExceptionMessage" type="Data"><subsheetid>551ba61e-f0ed-40cc-a54f-003311403930</subsheetid><narrative>Contains exception message in case of error</narrative><display x="-180" y="60" /><datatype>text</datatype><initialvalue /><private /><alwaysinit /></stage><stage stageid="255e790a-2714-48c1-9094-ea421685f1f0" name="Query Recognition Result" type="Code"><subsheetid>551ba61e-f0ed-40cc-a54f-003311403930</subsheetid><loginhibit /><narrative>Gets the recognition result based on the task ID</narrative><display x="60" y="105" w="90" h="60" /><inputs><input type="text" name="taskId" expr="[taskId]" /><input type="text" name="accessKeyId" expr="[accessKeyId]" /><input type="password" name="accessKeySecret" expr="[accessKeySecret]" /></inputs><outputs><output type="text" name="ExceptionMessage" stage="ExceptionMessage" /><output type="text" name="statusText" stage="statusText" /><output type="text" name="RecognitionJSONResponse" stage="RecognitionJSONResponse" /></outputs><onsuccess>1c50a6b8-ef09-4d33-8d31-e18bd73e945c</onsuccess><code><![CDATA[//Initialize
+ExceptionMessage = string.Empty;
+RecognitionJSONResponse  = string.Empty;
+statusText = string.Empty;
+
+/**
+* Create and authenticate a client.
+*/
+			 
+IClientProfile profile = DefaultProfile.GetProfile(REGIONID,accessKeyId,accessKeySecret);
+DefaultAcsClient client = new DefaultAcsClient(profile);
+
+try
+{
+	 /**
+	 * Create a query request for the recording file recognition result and specify the task ID.
+	 */
+
+	CommonRequest getRequest = new CommonRequest();
+	getRequest.Domain = DOMAIN;
+	getRequest.Version = API_VERSION;
+	getRequest.Action = GET_REQUEST_ACTION;
+	getRequest.Product = PRODUCT;
+	getRequest.Method = MethodType.GET;
+	getRequest.AddQueryParameters(KEY_TASK_ID, taskId);
+
+	 //Send the query request for the recording file recognition result.
+	 
+		CommonResponse getResponse = client.GetCommonResponse(getRequest);
+		if (getResponse.HttpStatus != 200)
+		{
+			ExceptionMessage  = "Failed to query the recording file recognition result. HTTP status code: " + getResponse.HttpStatus;
+		}
+		RecognitionJSONResponse=getResponse.Data;
+		JObject jsonObj = JObject.Parse(getResponse.Data);
+		statusText = jsonObj[KEY_STATUS_TEXT].ToString();
+}
+
+catch (ServerException ex)
+{
+	ExceptionMessage=ex.ToString();
+}
+catch (ClientException ex)
+{
+	ExceptionMessage=ex.ToString();
+}]]></code></stage><stage stageid="a8ab7a1c-c6bc-4c08-ad92-716e8117e824" name="RecognitionJSONResponse" type="Data"><subsheetid>551ba61e-f0ed-40cc-a54f-003311403930</subsheetid><narrative>The server returns a response to the query request for the recording file recognition result. The response includes response parameters in a JSON-formatted string.</narrative><display x="-120" y="60" /><datatype>text</datatype><initialvalue /><private /><alwaysinit /></stage><stage stageid="a457ed00-3dd3-42ba-8cf2-74d61827d70a" name="statusText" type="Data"><subsheetid>551ba61e-f0ed-40cc-a54f-003311403930</subsheetid><narrative>The status message.</narrative><display x="-240" y="60" /><datatype>text</datatype><initialvalue /><private /><alwaysinit /></stage><stage stageid="2be57801-d8a0-410b-b590-e490c613b2ba" name="Get AccessKeys" type="SubSheet"><subsheetid>551ba61e-f0ed-40cc-a54f-003311403930</subsheetid><loginhibit /><display x="60" y="30" /><font family="Segoe UI" size="10" style="Regular" color="3366FF" /><onsuccess>255e790a-2714-48c1-9094-ea421685f1f0</onsuccess><processid>7045bdf1-bb14-4e8d-9bf0-981903aa8d06</processid></stage><stage stageid="b4bd9f1d-36c5-4714-beff-c41a0780b38a" name="statusText" type="Data"><subsheetid>451da661-f02b-4f30-a8b3-6889daebdd12</subsheetid><loginhibit /><narrative>The status message.</narrative><display x="-135" y="240" /><datatype>text</datatype><initialvalue /><private /><alwaysinit /></stage><stage stageid="ef44eca9-fefa-4976-8440-ac5d8c100b94" name="RequestId" type="Data"><subsheetid>451da661-f02b-4f30-a8b3-6889daebdd12</subsheetid><loginhibit /><narrative>The ID of the request, which is used for debugging.</narrative><display x="-255" y="285" /><datatype>text</datatype><initialvalue /><private /><alwaysinit /></stage><stage stageid="9a300026-d7cc-409a-ab1d-4fb20037e5ee" name="StatusCode" type="Data"><subsheetid>451da661-f02b-4f30-a8b3-6889daebdd12</subsheetid><loginhibit /><narrative>The status code.</narrative><display x="-195" y="285" /><datatype>text</datatype><initialvalue /><private /><alwaysinit /></stage><stage stageid="cf381fbf-d60b-4c57-b190-7e8ba88ef742" name="valid_times" type="Collection"><subsheetid>451da661-f02b-4f30-a8b3-6889daebdd12</subsheetid><loginhibit /><narrative>The valid time period that truly requires speech recognition in the total length of an audio track.</narrative><display x="-195" y="75" /><datatype>collection</datatype><private /><alwaysinit /><collectioninfo><field name="begin_time" type="number" description="The start time offset of the valid time period. Unit: milliseconds." /><field name="end_time" type="number" description="The end time offset of the valid time period. Unit: milliseconds." /><field name="channel_id" type="number" description="The sequence number of the audio track to which the setting of the valid time period applies. The value starts from 0." /></collectioninfo></stage></process></object>
+        <credential id="c0ab910d-530b-40eb-8b57-289b08dad00c" name="BluePrism AlibabaCloud Recording File Recognition" xmlns="http://www.blueprism.co.uk/product/credential">
+            <description>AccessKeyID and SecretAccessKey for AlibabaCloud Recording File Recognition service</description>
+            <credentialType>General</credentialType>
+            <members>
+                <object id="7b8d6aee-4abb-4983-b10f-493734954fdc" />
+            </members>
+        </credential>
+        <object-group id="0ab93741-f878-49f8-8d89-78e98a24aed0" name="Default" isDefaultGroup="True" xmlns="http://www.blueprism.co.uk/product/object-group">
+            <members>
+                <object id="7b8d6aee-4abb-4983-b10f-493734954fdc" />
+            </members>
+        </object-group>
+    </bpr:contents>
+</bpr:release>
